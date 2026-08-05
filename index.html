@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北海道七天六夜雙人浪漫之旅 | 專屬行程規劃</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Chosen Palette: Hokkaido Autumn Romance (Slate-50 background, Indigo-900 text, Indigo-600 primary accents, Amber-500 highlights) -->
+    <!-- Application Structure Plan: 採用單頁式導覽架構 (SPA)，頂部固定導覽列方便隨時跳轉。包含五大區塊：1. 旅程總覽 (Hero section，帶出旅遊氛圍與基本資訊)；2. 交通住宿 (整合航班、飯店，並運用 Chart.js 視覺化呈現放射狀行程的交通時間，幫助使用者建立空間感)；3. 每日行程 (使用可切換標籤與時間軸 Timeline 設計，清楚呈現每日節奏與細節)；4. 美食地圖 (卡片式網格排列，附帶互動式分類篩選器，方便快速尋找想吃的料理)；5. 行前準備 (實用清單，確保出發前無遺漏)。此結構從宏觀到微觀，符合旅客行前確認與旅途中查閱的邏輯。 -->
+    <!-- Visualization & Content Choices: 1. 交通時間評估 (Chart.js 長條圖) -> 目的：比較從札幌出發至各景點的交通成本 -> 互動：Hover 顯示確切分鐘數 -> 理由：因為行程以札幌為中心呈放射狀，視覺化交通時間能幫助旅客理解每日通車負擔。2. 每日行程 (Timeline + Tabs) -> 目的：清楚展示七天詳細規劃 -> 互動：點擊 Day 1~7 切換，點擊 Google Maps 另開視窗 -> 理由：時間軸是最適合呈現順序性行程的 UI。3. 美食地圖 (Grid + Filters) -> 目的：分類推薦餐廳 -> 互動：點擊分類按鈕過濾卡片 -> 理由：給予彈性選擇，提升期待感。全程使用 Unicode Icon 代替 SVG 以符合規範。 -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .chart-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 600px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            height: 300px; 
+            max-height: 400px; 
+        } 
+        
+        @media (min-width: 768px) { 
+            .chart-container { height: 350px; } 
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #4f46e5;
+            border: 2px solid #fff;
+        }
+
+        .tab-active {
+            border-bottom-width: 2px;
+            border-color: #4f46e5;
+            color: #4f46e5;
+            font-weight: 600;
+        }
+
+        .filter-active {
+            background-color: #4f46e5;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+    <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold text-indigo-900">✈️ 北海道旅遊</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#overview" class="text-sm font-medium hover:text-indigo-600 transition-colors">行程總覽</a>
+                    <a href="#logistics" class="text-sm font-medium hover:text-indigo-600 transition-colors">交通住宿</a>
+                    <a href="#itinerary" class="text-sm font-medium hover:text-indigo-600 transition-colors">每日行程</a>
+                    <a href="#food" class="text-sm font-medium hover:text-indigo-600 transition-colors">美食地圖</a>
+                    <a href="#prep" class="text-sm font-medium hover:text-indigo-600 transition-colors">行前準備</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header id="overview" class="pt-24 pb-12 lg:pt-32 lg:pb-20 px-4 bg-indigo-900 text-white text-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-20" style="background-image: repeating-linear-gradient(45deg, #000 0, #000 2px, transparent 2px, transparent 8px);"></div>
+        <div class="max-w-4xl mx-auto relative z-10">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight">北海道秋浪漫．雙人悠閒慢遊</h1>
+            <p class="text-lg md:text-xl text-indigo-200 mb-8">結合自然美景、百年酒香與極致美食的七天六夜專屬回憶</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                <div class="bg-white/10 backdrop-blur rounded-lg p-4">
+                    <div class="text-2xl mb-1">📅</div>
+                    <div class="text-sm text-indigo-200">旅遊日期</div>
+                    <div class="font-semibold">2026/10/11 - 10/17</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur rounded-lg p-4">
+                    <div class="text-2xl mb-1">👫</div>
+                    <div class="text-sm text-indigo-200">同行成員</div>
+                    <div class="font-semibold">2人 (情侶)</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur rounded-lg p-4">
+                    <div class="text-2xl mb-1">📍</div>
+                    <div class="text-sm text-indigo-200">主要城市</div>
+                    <div class="font-semibold">札幌·余市·小樽·旭川</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur rounded-lg p-4">
+                    <div class="text-2xl mb-1">💡</div>
+                    <div class="text-sm text-indigo-200">旅遊風格</div>
+                    <div class="font-semibold">步調悠閒．重質不重量</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+
+        <section id="logistics">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-indigo-900 mb-4">交通與住宿資訊</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto">本區塊統整了來回航班、固定下榻飯店資訊，以及以札幌為中心前往周邊城市（小樽、余市、旭川）的預估交通時間，幫助您建立每日出行的時間概念。</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 relative">
+                    <div class="absolute top-0 right-0 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl">已預訂</div>
+                    <h3 class="text-xl font-bold text-indigo-900 mb-4 flex items-center">✈️ 航班資訊 (星宇航空)</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                            <div>
+                                <span class="block text-sm text-slate-500">去程 (10/11)</span>
+                                <span class="font-semibold text-lg">JX 850</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="block font-bold">台北 TPE ➔ 新千歲 CTS</span>
+                                <span class="text-sm text-slate-600">約 10:05 起飛 - 15:10 抵達</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <div>
+                                <span class="block text-sm text-slate-500">回程 (10/17)</span>
+                                <span class="font-semibold text-lg">JX 851</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="block font-bold">新千歲 CTS ➔ 台北 TPE</span>
+                                <span class="text-sm text-slate-600">約 16:25 起飛 - 19:35 抵達</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 relative">
+                    <div class="absolute top-0 right-0 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl">已預訂</div>
+                    <h3 class="text-xl font-bold text-indigo-900 mb-4 flex items-center">🏨 住宿資訊</h3>
+                    <div>
+                        <span class="block text-sm text-slate-500">六晚連住免換飯店</span>
+                        <h4 class="font-bold text-xl mb-2">札幌王子大飯店 (Sapporo Prince Hotel)</h4>
+                        <p class="text-slate-600 text-sm mb-4">擁有美麗圓柱形外觀與頂樓景觀溫泉，距離地鐵西11丁目站步行約3分鐘，交通便利，非常適合作為六天的放射狀旅遊基地。</p>
+                        <a href="https://www.google.com/maps/search/?api=1&query=札幌王子大飯店" target="_blank" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 text-sm font-semibold transition-colors">
+                            📍 在 Google Maps 查看位置 ➔
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 md:p-8">
+                <h3 class="text-xl font-bold text-indigo-900 mb-6 text-center">札幌出發：跨城交通時間評估 (單程)</h3>
+                <div class="chart-container">
+                    <canvas id="transportChart"></canvas>
+                </div>
+                <p class="text-xs text-slate-400 text-center mt-4">註：時間為搭乘 JR 快速/特急列車之預估平均時間，實際依班次為準。</p>
+            </div>
+        </section>
+
+        <section id="itinerary">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-indigo-900 mb-4">每日行程規劃</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto">此區塊以時間軸方式詳細記錄了七天六夜的推薦行程。點擊上方天數標籤可切換每日內容。每日僅安排 2-3 個重點，確保您與伴侶有充足的時間享受悠閒的兩人世界。</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="flex overflow-x-auto border-b border-slate-200 no-scrollbar" id="timeline-tabs">
+                </div>
+                <div class="p-6 md:p-8" id="timeline-content">
+                </div>
+            </div>
+        </section>
+
+        <section id="food">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-indigo-900 mb-4">精選美食地圖</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto">北海道是美食天堂！這裡為您整理了行程中必吃的兩大名店，以及其他周邊推薦。您可以使用下方按鈕篩選料理種類，並直接點擊連結導航。</p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-2 mb-8" id="food-filters">
+                <button class="px-4 py-2 rounded-full border border-indigo-600 text-sm font-medium transition-colors filter-active" data-filter="all">全部美食</button>
+                <button class="px-4 py-2 rounded-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 text-sm font-medium transition-colors" data-filter="必吃名店">必吃名店</button>
+                <button class="px-4 py-2 rounded-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 text-sm font-medium transition-colors" data-filter="海鮮">海鮮/壽司</button>
+                <button class="px-4 py-2 rounded-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 text-sm font-medium transition-colors" data-filter="甜點">甜點/下午茶</button>
+                <button class="px-4 py-2 rounded-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 text-sm font-medium transition-colors" data-filter="拉麵">拉麵</button>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="food-grid">
+            </div>
+        </section>
+
+        <section id="prep" class="pb-12">
+            <div class="bg-indigo-50 rounded-2xl p-8 md:p-12 relative overflow-hidden">
+                <div class="absolute top-[-50px] right-[-50px] text-9xl opacity-10">🎒</div>
+                <h2 class="text-3xl font-bold text-indigo-900 mb-6">行前準備清單</h2>
+                <div class="grid md:grid-cols-2 gap-8 relative z-10">
+                    <div>
+                        <h3 class="font-bold text-lg mb-4 text-indigo-800 flex items-center">📝 必備文件與預約</h3>
+                        <ul class="space-y-3 text-slate-700">
+                            <li class="flex items-start"><span class="mr-2 text-indigo-600">✔</span> 護照 (確認效期六個月以上)</li>
+                            <li class="flex items-start"><span class="mr-2 text-indigo-600">✔</span> Visit Japan Web 線上填寫完成並截圖 QR Code</li>
+                            <li class="flex items-start"><span class="mr-2 text-indigo-600">✔</span> <b>余市蒸溜所見學預約確認信</b> (強烈建議提前1個月上網預約)</li>
+                            <li class="flex items-start"><span class="mr-2 text-indigo-600">✔</span> 網卡或 Wi-Fi 機</li>
+                            <li class="flex items-start"><span class="mr-2 text-indigo-600">✔</span> 日幣現金 (部分小店與拉麵食券機不支援刷卡)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-4 text-indigo-800 flex items-center">🧥 10月中旬穿搭建議 (約 7°C - 15°C)</h3>
+                        <ul class="space-y-3 text-slate-700">
+                            <li class="flex items-start"><span class="mr-2 text-amber-500">💡</span> <b>洋蔥式穿搭</b>：室內/電車都有暖氣，外套需容易穿脫。</li>
+                            <li class="flex items-start"><span class="mr-2 text-amber-500">💡</span> <b>外層</b>：防風防潑水外套或輕薄羽絨/大衣。</li>
+                            <li class="flex items-start"><span class="mr-2 text-amber-500">💡</span> <b>中層</b>：薄毛衣、長袖針織衫、厚棉T。</li>
+                            <li class="flex items-start"><span class="mr-2 text-amber-500">💡</span> <b>配件</b>：薄圍巾、輕便手套 (前往旭川可能較冷)。</li>
+                            <li class="flex items-start"><span class="mr-2 text-amber-500">💡</span> <b>鞋子</b>：好走的防水休閒鞋或短靴 (無需雪靴，此時尚未積雪)。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center">
+        <p class="mb-2">Happy Trip to Hokkaido! 祝兩位旅途愉快，浪漫滿分。</p>
+        <p class="text-sm">Created for 2026/10/11 - 10/17 Itinerary</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const initChart = () => {
+                const ctx = document.getElementById('transportChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['新千歲機場', '小樽', '余市', '旭川'],
+                        datasets: [{
+                            label: '單程交通時間 (分鐘)',
+                            data: [40, 35, 75, 90],
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.6)', 
+                                'rgba(16, 185, 129, 0.6)', 
+                                'rgba(245, 158, 11, 0.6)', 
+                                'rgba(139, 92, 246, 0.6)'  
+                            ],
+                            borderColor: [
+                                'rgb(59, 130, 246)',
+                                'rgb(16, 185, 129)',
+                                'rgb(245, 158, 11)',
+                                'rgb(139, 92, 246)'
+                            ],
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.parsed.y + ' 分鐘 (JR單程)';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: '時間 (分鐘)' }
+                            }
+                        }
+                    }
+                });
+            };
+
+            const itineraryData = [
+                {
+                    day: 1,
+                    date: '10/11 (日)',
+                    title: '抵達北國，浪漫湯咖哩之夜',
+                    events: [
+                        { time: '15:10', title: '抵達新千歲機場 (CTS)', desc: '搭乘星宇航空 JX 850 抵達。辦理入境手續、領取行李。', transport: '✈️ 飛機', duration: '約 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=新千歲機場' },
+                        { time: '16:15', title: '搭乘 JR 前往札幌市區', desc: '搭乘 JR 快速機場線 (Rapid Airport) 前往札幌車站。', transport: '🚂 JR 快速機場線', duration: '40 分鐘', map: '' },
+                        { time: '17:15', title: '札幌王子大飯店 Check-in', desc: '抵達札幌站後，轉乘地下鐵或搭乘計程車前往飯店辦理入住，稍作休息。', transport: '🚕 計程車/地鐵', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=札幌王子大飯店' },
+                        { time: '19:00', title: '晚餐：湯咖喱 奥芝商店 実家', desc: '【必吃名店】品嚐鮮甜蝦湯頭的北海道特產湯咖哩，暖胃又暖心。', transport: '🚶 步行/地鐵', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=湯咖喱+奥芝商店+実家' },
+                        { time: '21:00', title: '札幌電視塔與大通公園夜景', desc: '飯後牽手漫步大通公園，欣賞札幌電視塔點燈的美麗夜景。', transport: '🚶 步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=大通公園+札幌' }
+                    ]
+                },
+                {
+                    day: 2,
+                    date: '10/12 (一)',
+                    title: '札幌經典與成吉思汗烤肉',
+                    events: [
+                        { time: '10:00', title: '悠閒起床與早餐', desc: '享受無壓力的早晨，可在飯店內享用早餐或到附近咖啡廳。', transport: '-', duration: '1.5 小時', map: '' },
+                        { time: '11:30', title: 'サッポロビール博物館 (札幌啤酒博物館)', desc: '【必去景點】了解北海道啤酒歷史，紅磚建築非常適合情侶合照。參觀後可自費試飲三種經典啤酒。', transport: '🚌 巴士/計程車', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=サッポロビール博物館' },
+                        { time: '14:00', title: '札幌車站商圈逛街與下午茶', desc: '在札幌車站周邊 (大丸百貨、Stellar Place) 逛街，找間甜點店享受下午茶。', transport: '🚌 巴士', duration: '停留 3 小時', map: 'https://www.google.com/maps/search/?api=1&query=札幌車站' },
+                        { time: '18:00', title: '晚餐：成吉思汗だるま 本店', desc: '【必吃名店】體驗北海道道地烤羊肉！肉質鮮嫩無腥味，搭配啤酒絕讚。人潮較多可能需排隊。', transport: '🚇 地鐵至薄野站', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=成吉思汗だるま+本店' },
+                        { time: '20:30', title: '薄野 (Susukino) 繁華街體驗', desc: '欣賞薄野著名的 NIKKA 威士忌霓虹燈招牌，感受北國夜生活氛圍。', transport: '🚶 步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=薄野交差點' }
+                    ]
+                },
+                {
+                    day: 3,
+                    date: '10/13 (二)',
+                    title: '微醺余市與純愛小樽 (上)',
+                    events: [
+                        { time: '09:00', title: '前往余市', desc: '從札幌搭乘 JR 前往余市 (需在小樽轉車)。沿途欣賞海岸線風光。', transport: '🚂 JR 函館本線', duration: '約 1 小時 15 分', map: '' },
+                        { time: '10:30', title: 'ニッカウヰスキー 余市蒸溜所', desc: '【必去景點】預約制見學。參觀威士忌製作過程，感受「阿政與愛莉」的浪漫歷史，最後可免費試飲。', transport: '🚶 步行 (車站出發3分)', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=ニッカウヰスキー+余市蒸溜所' },
+                        { time: '13:00', title: '午餐：柿崎商店 海鮮工房', desc: '余市車站附近的高CP值海鮮丼飯，新鮮美味。', transport: '🚶 步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=柿崎商店+海鮮工房' },
+                        { time: '14:30', title: '搭車返回小樽市區', desc: '搭乘 JR 從余市回到小樽。', transport: '🚂 JR 函館本線', duration: '約 25 分鐘', map: '' },
+                        { time: '15:00', title: '小樽堺町通商店街', desc: '漫步復古街道。參觀小樽音樂盒堂 (挑選給彼此的紀念品)、北一硝子館。', transport: '🚶 步行', duration: '停留 2.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=小樽堺町通商店街' },
+                        { time: '17:30', title: 'LeTAO 本店下午茶/傍晚甜點', desc: '品嚐經典的雙層乳酪蛋糕，頂樓展望台可俯瞰小樽街景。', transport: '🚶 步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=LeTAO+本店' },
+                        { time: '19:00', title: '小樽運河夜景與晚餐', desc: '欣賞點燈後浪漫的小樽運河。晚餐可在運河周邊的洋食餐廳或壽司店享用。隨後搭 JR 回札幌。', transport: '🚂 JR (回程40分)', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=小樽運河' }
+                    ]
+                },
+                {
+                    day: 4,
+                    date: '10/14 (三)',
+                    title: '童話色彩的白色戀人與神宮',
+                    events: [
+                        { time: '10:00', title: '北海道神宮', desc: '北海道最大的神社，漫步在靜謐的森林參道中，為彼此祈求平安幸福。可品嚐神宮限定的判官樣麻糬。', transport: '🚇 地鐵圓山公園站', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=北海道神宮' },
+                        { time: '12:00', title: '午餐：圓山周邊文青餐廳', desc: '圓山公園周圍有許多氣氛佳的早午餐或和食餐廳。', transport: '🚶 步行', duration: '停留 1.5 小時', map: '' },
+                        { time: '14:00', title: '白色戀人觀光工廠 (Shiroi Koibito Park)', desc: '充滿歐風童話色彩的主題公園，除了參觀巧克力製作，還可以在戶外庭園拍出絕美情侶照。', transport: '🚇 地鐵宮之澤站', duration: '停留 3 小時', map: 'https://www.google.com/maps/search/?api=1&query=白い恋人パーク' },
+                        { time: '18:00', title: '狸小路商店街', desc: '返回市區，前往札幌最熱鬧的商店街採買藥妝與伴手禮。', transport: '🚇 地鐵/路面電車', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=狸小路商店街' },
+                        { time: '20:00', title: '晚餐：自由選擇 (螃蟹料理或串鳥)', desc: '可預約一頓豐盛的螃蟹大餐犒賞自己，或選擇道地的串烤店體驗在地氛圍。', transport: '🚶 步行', duration: '停留 1.5 小時', map: '' }
+                    ]
+                },
+                {
+                    day: 5,
+                    date: '10/15 (四)',
+                    title: '與動物的療癒相遇：旭川',
+                    events: [
+                        { time: '08:30', title: '前往旭川', desc: '搭乘 JR 特急列車 (特急 Lilac/Kamui) 前往旭川，車程約需一個半小時。', transport: '🚂 JR 特急', duration: '90 分鐘', map: '' },
+                        { time: '10:30', title: '旭川市旭山動物園', desc: '【必去景點】日本最受歡迎的動物園之一！以行動展示聞名，可以超近距離觀察北極熊、海豹和企鵝的生動姿態。', transport: '🚌 旭川站轉公車', duration: '停留 3.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=旭山動物園' },
+                        { time: '14:30', title: '午遲餐：旭川拉麵村', desc: '集合了八家旭川著名的醬油拉麵名店，如梅光軒、青葉等，一次滿足。', transport: '🚕 計程車/公車', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=あさひかわラーメン村' },
+                        { time: '16:30', title: 'AEON MALL 旭川站前店 / 搭車返回', desc: '在車站旁的商場稍作逛街休息，隨後搭乘 JR 特急列車返回札幌。', transport: '🚂 JR 特急', duration: '90 分鐘', map: '' },
+                        { time: '19:30', title: '札幌市區晚餐：甜點收尾', desc: '晚餐可簡單吃，重點是體驗札幌特有的「夜間聖代 (シメパフェ)」，以華麗的冰淇淋聖代結束美好的一天。', transport: '🚶 步行', duration: '停留 1 小時', map: '' }
+                    ]
+                },
+                {
+                    day: 6,
+                    date: '10/16 (五)',
+                    title: '札幌私房漫遊與最後採買',
+                    events: [
+                        { time: '10:00', title: '二条市場', desc: '體驗札幌的在地早市，可以品嚐新鮮的海膽、鮭魚卵等海鮮丼當作奢華的早午餐。', transport: '🚶 步行/地鐵', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=二条市場' },
+                        { time: '12:00', title: '中島公園秋日散策', desc: '10月中旬有機會在中島公園欣賞到美麗的紅葉與銀杏，非常適合情侶拍照散步。', transport: '🚇 地鐵中島公園站', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=中島公園+札幌' },
+                        { time: '15:00', title: '札幌 JR 塔展望室 T38', desc: '登上高樓俯瞰整個札幌市區，白天與黃昏的景色都相當迷人。', transport: '🚇 地鐵', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=JRタワー展望室+T38' },
+                        { time: '18:00', title: '最後的晚餐：精緻和牛燒肉或居酒屋', desc: '挑選一家高質感的和牛燒肉店，為這趟美好的旅程乾杯慶祝。', transport: '-', duration: '停留 2 小時', map: '' },
+                        { time: '20:30', title: '行李打包', desc: '回到溫暖的王子大飯店，享受頂樓溫泉，並整理豐富的戰利品。', transport: '-', duration: '-', map: '' }
+                    ]
+                },
+                {
+                    day: 7,
+                    date: '10/17 (六)',
+                    title: '滿載而歸，下次再見',
+                    events: [
+                        { time: '09:30', title: '飯店退房', desc: '辦理 Check-out，帶著滿滿的回憶準備前往機場。', transport: '-', duration: '-', map: '' },
+                        { time: '10:00', title: '搭乘 JR 前往機場', desc: '預留充足時間，搭乘快速機場線前往新千歲機場。', transport: '🚂 JR 快速機場線', duration: '40 分鐘', map: '' },
+                        { time: '11:00', title: '新千歲機場國內線航廈：伴手禮天堂', desc: '新千歲機場非常好逛！Royce 巧克力世界、哆啦A夢天空公園、各式北海道特產都在這裡，做最後的衝刺買齊伴手禮。', transport: '🚶 步行', duration: '停留 3.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=新千歲機場' },
+                        { time: '14:25', title: '前往國際線辦理報到', desc: '航班起飛前兩小時，前往國際線航廈辦理星宇航空 JX 851 報到托運手續。', transport: '🚶 步行', duration: '-', map: '' },
+                        { time: '16:25', title: '搭機返回台北', desc: '滿載浪漫回憶，平安返回溫暖的家。(預計 19:35 抵達 TPE)', transport: '✈️ 飛機', duration: '約 4 小時', map: '' }
+                    ]
+                }
+            ];
+
+            const renderTabs = () => {
+                const tabsContainer = document.getElementById('timeline-tabs');
+                let tabsHTML = '';
+                itineraryData.forEach((dayData, index) => {
+                    const isActive = index === 0 ? 'tab-active' : 'text-slate-500 hover:text-indigo-600';
+                    tabsHTML += `
+                        <button class="flex-shrink-0 px-6 py-4 text-center cursor-pointer transition-colors tab-btn ${isActive}" data-day="${dayData.day}">
+                            <div class="text-sm font-medium mb-1">${dayData.date}</div>
+                            <div class="text-xs">Day ${dayData.day}</div>
+                        </button>
+                    `;
+                });
+                tabsContainer.innerHTML = tabsHTML;
+            };
+
+            const renderTimeline = (dayNumber) => {
+                const contentContainer = document.getElementById('timeline-content');
+                const dayData = itineraryData.find(d => d.day === dayNumber);
+                
+                let contentHTML = `
+                    <h3 class="text-2xl font-bold text-indigo-900 mb-8 border-l-4 border-amber-500 pl-4">${dayData.title}</h3>
+                    <div class="relative border-l-2 border-indigo-200 ml-3 md:ml-6 space-y-10 pb-4">
+                `;
+
+                dayData.events.forEach(event => {
+                    const mapBtn = event.map ? `
+                        <a href="${event.map}" target="_blank" class="inline-flex items-center mt-3 text-xs font-semibold text-indigo-600 hover:text-amber-500 bg-indigo-50 px-3 py-1.5 rounded-full transition-colors">
+                            📍 Google Maps 導航
+                        </a>` : '';
+
+                    contentHTML += `
+                        <div class="relative pl-6 md:pl-8 timeline-item">
+                            <div class="flex flex-col md:flex-row md:items-start mb-1">
+                                <span class="text-sm font-bold text-indigo-600 md:w-20 pt-1 flex-shrink-0">${event.time}</span>
+                                <div class="bg-slate-50 border border-slate-100 p-4 rounded-lg shadow-sm flex-grow mt-2 md:mt-0">
+                                    <h4 class="text-lg font-bold text-slate-800">${event.title}</h4>
+                                    <div class="flex flex-wrap gap-3 mt-2 text-xs text-slate-500 font-medium">
+                                        <span class="bg-white px-2 py-1 rounded border border-slate-200">${event.transport}</span>
+                                        <span class="bg-white px-2 py-1 rounded border border-slate-200">⏳ ${event.duration}</span>
+                                    </div>
+                                    <p class="text-sm text-slate-600 mt-3 leading-relaxed">${event.desc}</p>
+                                    ${mapBtn}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                contentHTML += `</div>`;
+                contentContainer.innerHTML = contentHTML;
+            };
+
+            // Init Itinerary
+            renderTabs();
+            renderTimeline(1);
+
+            // Tab Event Listeners
+            document.getElementById('timeline-tabs').addEventListener('click', (e) => {
+                const btn = e.target.closest('.tab-btn');
+                if (!btn) return;
+
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.remove('tab-active');
+                    b.classList.add('text-slate-500');
+                });
+                btn.classList.add('tab-active');
+                btn.classList.remove('text-slate-500');
+
+                const day = parseInt(btn.getAttribute('data-day'));
+                renderTimeline(day);
+            });
+
+            const foodData = [
+                { name: '成吉思汗だるま 本店', category: '必吃名店', type: '烤肉', desc: '札幌必吃烤羊肉，肉質極佳無羊騷味，搭配特製沾醬與啤酒是絕配。', map: 'https://www.google.com/maps/search/?api=1&query=成吉思汗だるま+本店' },
+                { name: '湯咖喱 奥芝商店 実家', category: '必吃名店', type: '咖哩', desc: '以濃郁鮮甜的蝦子熬製湯頭聞名，食材豐富，是札幌湯咖哩的代表之一。', map: 'https://www.google.com/maps/search/?api=1&query=湯咖喱+奥芝商店+実家' },
+                { name: '柿崎商店 海鮮工房', category: '海鮮', type: '海鮮丼', desc: '位於余市車站附近，當地人也愛去的高CP值海鮮丼飯，新鮮份量大。', map: 'https://www.google.com/maps/search/?api=1&query=柿崎商店+海鮮工房' },
+                { name: 'LeTAO 本店', category: '甜點', type: '蛋糕', desc: '小樽必訪甜點，經典雙層乳酪蛋糕入口即化。二樓附設咖啡廳可內用。', map: 'https://www.google.com/maps/search/?api=1&query=LeTAO+本店' },
+                { name: '六花亭 札幌本店', category: '甜點', type: '伴手禮/甜點', desc: '除了購買經典的奶油葡萄夾心餅乾，二樓咖啡廳的限定甜點也非常推薦。', map: 'https://www.google.com/maps/search/?api=1&query=六花亭+札幌本店' },
+                { name: '旭川拉麵村', category: '拉麵', type: '拉麵', desc: '匯集旭川八大知名拉麵品牌，以醬油湯頭為主，一次滿足選擇困難症。', map: 'https://www.google.com/maps/search/?api=1&query=あさひかわラーメン村' },
+                { name: '二条市場 どんぶり茶屋', category: '海鮮', type: '海鮮丼', desc: '位於二条市場內，選擇多樣的豪華海鮮丼，體驗在地市場活力。', map: 'https://www.google.com/maps/search/?api=1&query=どんぶり茶屋+二条市場店' },
+                { name: '夜間聖代 (Parfaiteria beL)', category: '甜點', type: '聖代', desc: '體驗札幌獨特的「收尾聖代」文化，精緻如藝術品的聖代，為夜晚完美作結。', map: 'https://www.google.com/maps/search/?api=1&query=Parfaiteria+beL+札幌' },
+            ];
+
+            const renderFood = (filterCategory = 'all') => {
+                const grid = document.getElementById('food-grid');
+                grid.innerHTML = '';
+                
+                const filteredData = filterCategory === 'all' ? foodData : foodData.filter(item => item.category.includes(filterCategory) || item.type.includes(filterCategory));
+
+                filteredData.forEach(food => {
+                    grid.innerHTML += `
+                        <div class="bg-white border border-slate-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow group">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="font-bold text-lg text-slate-800">${food.name}</h3>
+                                <span class="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-1 rounded">${food.type}</span>
+                            </div>
+                            <p class="text-sm text-slate-600 mb-4 h-16 overflow-hidden">${food.desc}</p>
+                            <a href="${food.map}" target="_blank" class="block text-center w-full bg-slate-50 text-indigo-600 font-semibold text-sm py-2 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                查看地圖 ➔
+                            </a>
+                        </div>
+                    `;
+                });
+            };
+
+            // Init Food & Chart
+            renderFood();
+            initChart();
+
+            // Filter Event Listeners
+            document.getElementById('food-filters').addEventListener('click', (e) => {
+                if (e.target.tagName !== 'BUTTON') return;
+                
+                const buttons = document.querySelectorAll('#food-filters button');
+                buttons.forEach(btn => {
+                    btn.classList.remove('filter-active');
+                    btn.classList.remove('bg-indigo-600', 'text-white');
+                    btn.classList.add('text-indigo-600');
+                });
+                
+                e.target.classList.add('filter-active');
+                e.target.classList.remove('text-indigo-600');
+                e.target.classList.add('bg-indigo-600', 'text-white');
+
+                const filter = e.target.getAttribute('data-filter');
+                renderFood(filter);
+            });
+        });
+    </script>
+</body>
+</html>
