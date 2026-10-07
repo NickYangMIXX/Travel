@@ -8,7 +8,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <!-- Chosen Palette: Hokkaido Autumn Romance (Slate-50 background, Indigo-900 text, Indigo-600 primary accents, Amber-500 highlights) -->
-    
+    <!-- Application Structure Plan: 採用單頁式導覽架構 (SPA)，頂部固定導覽列方便隨時跳轉。包含五大區塊：1. 旅程總覽 (Hero section，帶出旅遊氛圍與基本資訊)；2. 交通住宿 (整合航班、飯店，並運用 Chart.js 視覺化呈現放射狀行程的交通時間，幫助使用者建立空間感)；3. 每日行程 (使用可切換標籤與時間軸 Timeline 設計，清楚呈現每日節奏與細節)；4. 美食地圖 (卡片式網格排列，附帶互動式分類篩選器，方便快速尋找想吃的料理)；5. 行前準備 (實用清單，確保出發前無遺漏)。此結構從宏觀到微觀，符合旅客行前確認與旅途中查閱的邏輯。 -->
+    <!-- Visualization & Content Choices: 1. 交通時間評估 (Chart.js 長條圖) -> 目的：比較從札幌出發至各景點的交通成本 -> 互動：Hover 顯示確切分鐘數 -> 理由：因為行程以札幌為中心呈放射狀，視覺化交通時間能幫助旅客理解每日通車負擔。2. 每日行程 (Timeline + Tabs) -> 目的：清楚展示七天詳細規劃 -> 互動：點擊 Day 1~7 切換，點擊 Google Maps 另開視窗 -> 理由：時間軸是最適合呈現順序性行程的 UI。3. 美食地圖 (Grid + Filters) -> 目的：分類推薦餐廳 -> 互動：點擊分類按鈕過濾卡片 -> 理由：給予彈性選擇，提升期待感。全程使用 Unicode Icon 代替 SVG 以符合規範。 -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
         
@@ -147,9 +150,9 @@
                     <h3 class="text-xl font-bold text-indigo-900 mb-4 flex items-center">🏨 住宿資訊</h3>
                     <div>
                         <span class="block text-sm text-slate-500">六晚連住免換飯店</span>
-                        <h4 class="font-bold text-xl mb-2">札幌王子大飯店 (Sapporo Prince Hotel)</h4>
-                        <p class="text-slate-600 text-sm mb-4">擁有美麗圓柱形外觀與頂樓景觀溫泉，距離地鐵西11丁目站步行約3分鐘，交通便利，非常適合作為六天的放射狀旅遊基地。</p>
-                        <a href="https://www.google.com/maps/search/?api=1&query=札幌王子大飯店" target="_blank" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 text-sm font-semibold transition-colors">
+                        <h4 class="font-bold text-xl mb-2">ホテルJALシティ札幌中島公園 (Hotel JAL City)</h4>
+                        <p class="text-slate-600 text-sm mb-4">緊鄰中島公園，環境優美且寧靜。距離地鐵「中島公園站」步行僅需約 3 分鐘，房內設施新穎，非常適合作為六天的放射狀旅遊基地。</p>
+                        <a href="https://www.google.com/maps/search/?api=1&query=ホテルJALシティ札幌中島公園" target="_blank" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 text-sm font-semibold transition-colors">
                             📍 在 Google Maps 查看位置 ➔
                         </a>
                     </div>
@@ -241,19 +244,21 @@
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: ['新千歲機場', '小樽', '余市', '旭川'],
+                        labels: ['新千歲機場', '小樽', '定山溪', '余市', '旭川'],
                         datasets: [{
                             label: '單程交通時間 (分鐘)',
-                            data: [40, 35, 75, 90],
+                            data: [40, 35, 60, 75, 90],
                             backgroundColor: [
                                 'rgba(59, 130, 246, 0.6)', 
                                 'rgba(16, 185, 129, 0.6)', 
+                                'rgba(236, 72, 153, 0.6)',
                                 'rgba(245, 158, 11, 0.6)', 
                                 'rgba(139, 92, 246, 0.6)'  
                             ],
                             borderColor: [
                                 'rgb(59, 130, 246)',
                                 'rgb(16, 185, 129)',
+                                'rgb(236, 72, 153)',
                                 'rgb(245, 158, 11)',
                                 'rgb(139, 92, 246)'
                             ],
@@ -269,7 +274,7 @@
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
-                                        return context.parsed.y + ' 分鐘 (JR單程)';
+                                        return context.parsed.y + ' 分鐘 (單程)';
                                     }
                                 }
                             }
@@ -291,72 +296,75 @@
                     title: '抵達北國，浪漫湯咖哩之夜',
                     events: [
                         { time: '15:10', title: '抵達新千歲機場 (CTS)', desc: '搭乘星宇航空 JX 850 抵達。辦理入境手續、領取行李。', transport: '✈️ 飛機', duration: '約 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=新千歲機場' },
-                        { time: '16:15', title: '搭乘 JR 前往札幌市區', desc: '搭乘 JR 快速機場線 (Rapid Airport) 前往札幌車站。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚆 JR 快速機場線 (單程約 ¥1,150)</b><br>• 16:06 出發 ➔ 16:44 抵達<br>• 16:18 出發 ➔ 16:56 抵達<br>• 16:30 出發 ➔ 17:08 抵達</span>', transport: '🚂 JR 快速機場線', duration: '40 分鐘', map: '' },
-                        { time: '17:15', title: '札幌王子大飯店 Check-in', desc: '抵達札幌站後，轉乘地下鐵前往飯店辦理入住，稍作休息。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚇 地鐵東西線 (單程約 ¥210)</b><br>• 17:13 大通站出發 ➔ 17:23 抵達西11丁目站<br>• 17:20 大通站出發 ➔ 17:30 抵達西11丁目站<br>• 17:27 大通站出發 ➔ 17:37 抵達西11丁目站</span>', transport: '🚕 計程車/地鐵', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=札幌王子大飯店' },
-                        { time: '19:00', title: '晚餐：湯咖喱 奥芝商店 実家', desc: '【必吃名店】品嚐鮮甜蝦湯頭的北海道特產湯咖哩，暖胃又暖心。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚇 地鐵/步行 (單程約 ¥210)</b><br>• 18:35 西11丁目出發 ➔ 18:45 抵達札幌站周邊<br>• 18:42 西11丁目出發 ➔ 18:52 抵達札幌站周邊<br>• 18:49 西11丁目出發 ➔ 18:59 抵達札幌站周邊</span>', transport: '🚶 步行/地鐵', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=湯咖喱+奥芝商店+実家' },
-                        { time: '21:00', title: '札幌電視塔與大通公園夜景', desc: '飯後牽手漫步大通公園，欣賞札幌電視塔點燈的美麗夜景。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚶 步行散策 (約 10 分鐘)</b></span>', transport: '🚶 步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=大通公園+札幌' }
+                        { time: '16:15', title: '搭乘 JR 前往札幌市區', desc: '搭乘 JR 快速機場線 (Rapid Airport) 前往札幌車站。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚆 推薦班次 (單程 ¥1,150 【使用 JR PASS】，約40分)：</b><br>• 15:54發 - 16:33抵達<br>• 16:06發 - 16:45抵達<br>• 16:18發 - 16:55抵達</span>', transport: '🚂 JR 快速機場線', duration: '40 分鐘', map: '' },
+                        { time: '17:15', title: '飯店 Check-in', desc: '前往 ホテルJALシティ札幌中島公園 辦理入住，放下行李。', transport: '🚇 地鐵/步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=ホテルJALシティ札幌中島公園' },
+                        { time: '18:00', title: 'JINS 札幌 PARCO 店', desc: '前往 PARCO 挑選款式與配製眼鏡。', transport: '🚶 步行/地鐵', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=JINS+札幌PARCO店' },
+                        { time: '19:30', title: '晚餐：二選一 (漢堡 或 湯咖哩)', desc: '可依心情選擇美式漢堡 <b>SHOGUN BURGER SUSUKINO</b>，或是知名的 <b>スープカレー奥芝商店 実家</b>。', transport: '🚶 步行', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=スープカレー奥芝商店+実家' }
                     ]
                 },
                 {
                     day: 2,
                     date: '10/12 (一)',
-                    title: '札幌經典與成吉思汗烤肉',
+                    title: '微醺余市與純愛小樽',
                     events: [
-                        { time: '10:00', title: '悠閒起床與早餐', desc: '享受無壓力的早晨，可在飯店內享用早餐或到附近咖啡廳。', transport: '-', duration: '1.5 小時', map: '' },
-                        { time: '11:30', title: 'サッポロビール博物館 (札幌啤酒博物館)', desc: '【必去景點】了解北海道啤酒歷史，紅磚建築非常適合情侶合照。參觀後可自費試飲三種經典啤酒。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚌 中央巴士 環88 (單程約 ¥210)</b><br>• 11:06 札幌站前出發 ➔ 11:24 抵達博物館<br>• 11:26 札幌站前出發 ➔ 11:44 抵達博物館<br>• 11:46 札幌站前出發 ➔ 12:04 抵達博物館</span>', transport: '🚌 巴士/計程車', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=サッポロビール博物館' },
-                        { time: '14:00', title: '札幌車站商圈逛街與下午茶', desc: '在札幌車站周邊 (大丸百貨、Stellar Place) 逛街，找間甜點店享受下午茶。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚌 中央巴士 環88 (單程約 ¥210)</b><br>• 13:45 博物館出發 ➔ 14:03 抵達札幌站前<br>• 14:05 博物館出發 ➔ 14:23 抵達札幌站前<br>• 14:25 博物館出發 ➔ 14:43 抵達札幌站前</span>', transport: '🚌 巴士', duration: '停留 3 小時', map: 'https://www.google.com/maps/search/?api=1&query=札幌車站' },
-                        { time: '18:00', title: '晚餐：成吉思汗だるま 本店', desc: '【必吃名店】體驗北海道道地烤羊肉！肉質鮮嫩無腥味，搭配啤酒絕讚。人潮較多可能需排隊。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚇 地鐵南北線 (單程約 ¥210)</b><br>• 17:40 札幌站出發 ➔ 17:43 抵達薄野站<br>• 17:47 札幌站出發 ➔ 17:50 抵達薄野站<br>• 17:54 札幌站出發 ➔ 17:57 抵達薄野站</span>', transport: '🚇 地鐵至薄野站', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=成吉思汗だるま+本店' },
-                        { time: '20:30', title: '薄野 (Susukino) 繁華街體驗', desc: '欣賞薄野著名的 NIKKA 威士忌霓虹燈招牌，感受北國夜生活氛圍。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚶 步行散策 (約 3 分鐘)</b></span>', transport: '🚶 步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=薄野交差點' }
+                        { time: '08:30', title: '出發前往余市', desc: '早上搭乘 JR 前往余市 (需在小樽轉車)。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚆 乘車費用提醒：</b><br>• 札幌 ➔ 小樽：【使用 JR PASS】<br>• 小樽 ➔ 余市：需自費單程 ¥440<br><br><b>🚆 推薦班次 (總車程約90分)：</b><br>• 07:43 札幌發 ➔ 08:29 小樽換車 (08:52發) ➔ 09:16 余市抵達<br>• 08:32 札幌發 ➔ 09:17 小樽換車 (09:40發) ➔ 10:04 余市抵達</span>', transport: '🚂 JR 函館本線', duration: '約 1.5 小時', map: '' },
+                        { time: '10:30', title: 'ニッカウヰスキー 余市蒸溜所 (已預訂)', desc: '【預約制見學】參觀威士忌製作過程。', transport: '🚶 步行', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=ニッカウヰスキー+余市蒸溜所' },
+                        { time: '12:30', title: '搭車前往小樽', desc: '結束見學後，搭乘 JR 回到小樽。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚆 乘車資訊：</b><br>• 余市 ➔ 小樽：需自費單程 ¥440<br>• 12:33 余市發 ➔ 12:57 小樽抵達</span>', transport: '🚂 JR 函館本線', duration: '25 分鐘', map: '' },
+                        { time: '13:00', title: '午餐：三角市場', desc: '抵達小樽後享用新鮮澎湃的海鮮丼。', transport: '🚶 步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=小樽+三角市場' },
+                        { time: '14:30', title: 'かま栄 (Kamaei) 工廠直賣店', desc: '人氣在地魚板老店，現炸熱騰騰的魚板當小吃。', transport: '🚶 步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=かま栄工場直売店' },
+                        { time: '15:30', title: '小樽運河與商圈散步', desc: '漫步小樽運河畔，感受懷舊復古氛圍。', transport: '🚶 步行', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=小樽運河' },
+                        { time: '17:30', title: '晚餐：若鶏時代なると 本店', desc: '小樽必吃靈魂美食「炸半雞」，外皮酥脆多汁。', transport: '🚶 步行', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=若鶏時代なると+本店' },
+                        { time: '19:30', title: '搭乘 JR 返回札幌', desc: '吃飽喝足後搭乘 JR 回札幌。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚆 乘車資訊 (單程 ¥750 【使用 JR PASS】，約35分)：</b><br>• 19:30 小樽發 ➔ 20:04 札幌抵達<br>• 20:00 小樽發 ➔ 20:34 札幌抵達</span>', transport: '🚂 JR', duration: '35 分鐘', map: '' }
                     ]
                 },
                 {
                     day: 3,
                     date: '10/13 (二)',
-                    title: '微醺余市與純愛小樽 (上)',
+                    title: '與動物的療癒相遇：旭川',
                     events: [
-                        { time: '09:00', title: '前往余市', desc: '從札幌搭乘 JR 前往余市 (需在小樽轉車)。沿途欣賞海岸線風光。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚆 JR 函館本線 (單程約 ¥1,280)</b><br>• 08:04 札幌出發 ➔ 09:17 抵達余市 (小樽轉乘)<br>• 08:53 札幌出發 ➔ 10:04 抵達余市 (小樽轉乘)<br>• 09:43 札幌出發 ➔ 11:17 抵達余市 (小樽轉乘)</span>', transport: '🚂 JR 函館本線', duration: '約 1 小時 15 分', map: '' },
-                        { time: '10:30', title: 'ニッカウヰスキー 余市蒸溜所', desc: '【必去景點】預約制見學。參觀威士忌製作過程，感受「阿政與愛莉」的浪漫歷史，最後可免費試飲。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚶 步行 (車站出發約 3 分鐘)</b></span>', transport: '🚶 步行 (車站出發3分)', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=ニッカウヰスキー+余市蒸溜所' },
-                        { time: '13:00', title: '午餐：柿崎商店 海鮮工房', desc: '余市車站附近的高CP值海鮮丼飯，新鮮美味。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚶 步行 (約 5 分鐘)</b></span>', transport: '🚶 步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=柿崎商店+海鮮工房' },
-                        { time: '14:30', title: '搭車返回小樽市區', desc: '搭乘 JR 從余市回到小樽。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚆 JR 函館本線 (單程約 ¥440)</b><br>• 13:58 余市出發 ➔ 14:22 抵達小樽<br>• 15:13 余市出發 ➔ 15:37 抵達小樽<br>• 16:32 余市出發 ➔ 16:56 抵達小樽</span>', transport: '🚂 JR 函館本線', duration: '約 25 分鐘', map: '' },
-                        { time: '15:00', title: '小樽堺町通商店街', desc: '漫步復古街道。參觀小樽音樂盒堂 (挑選給彼此的紀念品)、北一硝子館。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚶 步行散策 (車站出發約 15 分鐘)</b></span>', transport: '🚶 步行', duration: '停留 2.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=小樽堺町通商店街' },
-                        { time: '17:30', title: 'LeTAO 本店下午茶/傍晚甜點', desc: '品嚐經典的雙層乳酪蛋糕，頂樓展望台可俯瞰小樽街景。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚶 步行 (約 5 分鐘)</b></span>', transport: '🚶 步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=LeTAO+本店' },
-                        { time: '19:00', title: '小樽運河夜景與晚餐', desc: '欣賞點燈後浪漫的小樽運河。晚餐可在運河周邊的洋食餐廳或壽司店享用。隨後搭 JR 回札幌。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚆 JR 函館本線 (單程約 ¥750)</b><br>• 19:35 小樽出發 ➔ 20:07 抵達札幌 (快速)<br>• 20:00 小樽出發 ➔ 20:47 抵達札幌 (區間)<br>• 20:38 小樽出發 ➔ 21:10 抵達札幌 (快速)</span>', transport: '🚂 JR (回程40分)', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=小樽運河' }
+                        { time: '09:00', title: '前往旭川', desc: '搭乘 ＪＲ特急カムイ7号 前往旭川。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚆 乘車資訊 (原單程約 ¥5,220【使用 JR PASS】，約 85 分)：</b><br>• 09:00 札幌發 ➔ 10:25 旭川抵達 (特急カムイ7号)</span>', transport: '🚂 JR 特急', duration: '85 分鐘', map: '' },
+                        { time: '10:30', title: '旭川車站會合', desc: '於旭川車站與日本老師會合，隨後搭乘老師的專車前往旭山動物園。', transport: '🚗 朋友專車', duration: '約 30 分鐘', map: 'https://www.google.com/maps/search/?api=1&query=旭川車站' },
+                        { time: '11:00', title: '旭川市旭山動物園 (分開行動)', desc: '日本最受歡迎的動物園之一！抵達後與女友分開行動，各自享受探索園區的樂趣。', transport: '🚶 園區漫步', duration: '停留約 3 小時', map: 'https://www.google.com/maps/search/?api=1&query=旭山動物園' },
+                        { time: '14:30', title: '單人悠閒時光 (車站周邊)', desc: '離開動物園返回旭川車站周邊。推薦前往 <b>Fukuyoshi Cafe (福吉カフェ)</b> 享受歷史建築內的質感下午茶與常盤燒，或是在 <b>AEON MALL 旭川站前店</b> 逛逛休息。', transport: '🚌 公車/步行', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=福吉カフェ+旭橋本店' },
+                        { time: '16:00', title: '旭川車站會合與搭車返回', desc: '於旭川車站與女友會合，隨後搭乘 JR 特急列車返回札幌市區。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚆 乘車資訊 (原單程約 ¥5,220【使用 JR PASS】，約 85 分)：</b><br>• 16:00 旭川發 ➔ 17:25 札幌抵達 (特急ライラック34号)<br>• 16:30 旭川發 ➔ 17:55 札幌抵達 (特急カムイ36号)</span>', transport: '🚂 JR 特急', duration: '90 分鐘', map: '' },
+                        { time: '18:00', title: '晚餐：回転寿司根室花まる', desc: 'JR 塔 Stellar Place 店。北海道超人氣平價迴轉壽司！(無法預約，需現場候位)', transport: '🚶 步行', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=回転寿司根室花まる+ステラプレイス店' },
+                        { time: '20:00', title: '札幌 JR 塔展望室 T38', desc: '吃飽後，直接搭乘電梯直達展望室。從高樓俯瞰整個札幌市區，享受浪漫的夜間城市風景。', transport: '🚶 步行 (同棟建築)', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=JRタワー展望室+T38' }
                     ]
                 },
                 {
                     day: 4,
                     date: '10/14 (三)',
-                    title: '童話色彩的白色戀人與神宮',
+                    title: '神宮參拜、悠閒市區與烤肉之夜',
                     events: [
-                        { time: '10:00', title: '北海道神宮', desc: '北海道最大的神社，漫步在靜謐的森林參道中，為彼此祈求平安幸福。可品嚐神宮限定的判官樣麻糬。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚇 地鐵東西線 (單程約 ¥210)</b><br>• 09:35 西11丁目出發 ➔ 09:40 抵達圓山公園站<br>• 09:42 西11丁目出發 ➔ 09:47 抵達圓山公園站<br>• 09:49 西11丁目出發 ➔ 09:54 抵達圓山公園站</span>', transport: '🚇 地鐵圓山公園站', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=北海道神宮' },
-                        { time: '12:00', title: '午餐：圓山周邊文青餐廳', desc: '圓山公園周圍有許多氣氛佳的早午餐或和食餐廳。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚶 步行 (約 10 分鐘)</b></span>', transport: '🚶 步行', duration: '停留 1.5 小時', map: '' },
-                        { time: '14:00', title: '白色戀人觀光工廠 (Shiroi Koibito Park)', desc: '充滿歐風童話色彩的主題公園，除了參觀巧克力製作，還可以在戶外庭園拍出絕美情侶照。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚇 地鐵東西線 (單程約 ¥250)</b><br>• 13:38 圓山公園站出發 ➔ 13:47 抵達宮之澤站<br>• 13:45 圓山公園站出發 ➔ 13:54 抵達宮之澤站<br>• 13:52 圓山公園站出發 ➔ 14:01 抵達宮之澤站</span>', transport: '🚇 地鐵宮之澤站', duration: '停留 3 小時', map: 'https://www.google.com/maps/search/?api=1&query=白い恋人パーク' },
-                        { time: '18:00', title: '狸小路商店街', desc: '返回市區，前往札幌最熱鬧的商店街採買藥妝與伴手禮。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚇 地鐵東西線 (單程約 ¥290)</b><br>• 17:35 宮之澤站出發 ➔ 17:50 抵達大通站<br>• 17:42 宮之澤站出發 ➔ 17:57 抵達大通站<br>• 17:49 宮之澤站出發 ➔ 18:04 抵達大通站</span>', transport: '🚇 地鐵/路面電車', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=狸小路商店街' },
-                        { time: '20:00', title: '晚餐：自由選擇 (螃蟹料理或串鳥)', desc: '可預約一頓豐盛的螃蟹大餐犒賞自己，或選擇道地的串烤店體驗在地氛圍。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚶 步行 (約 10 分鐘)</b></span>', transport: '🚶 步行', duration: '停留 1.5 小時', map: '' }
+                        { time: '10:00', title: '北海道神宮', desc: '北海道最大的神社，漫步在靜謐的森林參道中，為彼此祈求平安幸福。可品嚐神宮限定的判官樣麻糬。', transport: '🚇 地鐵圓山公園站', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=北海道神宮' },
+                        { time: '12:00', title: '午餐：札幌人氣拉麵三選一', desc: '可依當下心情與路線選擇：<br>1. <b>らーめん信玄</b> (主打濃潤味噌與必點炒飯)<br>2. <b>札幌一粒庵</b> (近車站，嚴選在地食材的元氣味噌)<br>3. <b>麺屋雪風</b> (薄野名店，濃郁豚骨雞白湯味噌)<br><span class="text-xs text-indigo-700 bg-indigo-50 p-1 rounded inline-block mt-2">💡 詳細地點與導航可參考下方【美食地圖】區塊</span>', transport: '🚇 依店家前往', duration: '停留 1.5 小時', map: '' },
+                        { time: '14:00', title: '市區自由逛街與下午茶', desc: '下午為自由時間，您們可以愜意地在大通、狸小路或車站周邊散步逛街，找間順眼的咖啡廳享受兩人時光。', transport: '🚶 步行', duration: '停留 2 小時', map: '' },
+                        { time: '16:30', title: 'Workman Plus 札幌八軒', desc: '前往札幌站搭乘 JR 札沼線(學園都市線) 至八軒站，這裡是高 CP 值機能服飾與戶外裝備天堂！<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚆 乘車資訊 (原單程 ¥250【使用 JR PASS】，約 6 分)：</b><br>• 16:20 札幌發 ➔ 16:26 八軒抵達<br>• 16:40 札幌發 ➔ 16:46 八軒抵達</span>', transport: '🚆 JR至八軒站', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=Workman+Plus+札幌八軒' },
+                        { time: '20:15', title: '晚餐：ジンギスカン 羊八 札幌本店 (已預約)', desc: '【已預約 20:15】極品成吉思汗烤羊肉。逛完街後從八軒搭 JR 回札幌，再轉乘地鐵至薄野一帶。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚆 乘車資訊 (JR原單程 ¥250【使用 JR PASS】，約 6 分)：</b><br>• 19:15 八軒發 ➔ 19:21 札幌抵達 (再轉乘地鐵)<br>• 19:35 八軒發 ➔ 19:41 札幌抵達 (再轉乘地鐵)</span>', transport: '🚆 JR轉地鐵', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=ジンギスカン+羊八+札幌本店' }
                     ]
                 },
                 {
                     day: 5,
                     date: '10/15 (四)',
-                    title: '與動物的療癒相遇：旭川',
+                    title: '定山溪賞楓與居酒屋之夜',
                     events: [
-                        { time: '08:30', title: '前往旭川', desc: '搭乘 JR 特急列車 (特急 Lilac/Kamui) 前往旭川，車程約需一個半小時。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚆 JR 特急 (自由席單程約 ¥5,220)</b><br>• 08:00 札幌出發 ➔ 09:25 抵達旭川<br>• 08:30 札幌出發 ➔ 09:55 抵達旭川<br>• 09:00 札幌出發 ➔ 10:25 抵達旭川</span>', transport: '🚂 JR 特急', duration: '90 分鐘', map: '' },
-                        { time: '10:30', title: '旭川市旭山動物園', desc: '【必去景點】日本最受歡迎的動物園之一！以行動展示聞名，可以超近距離觀察北極熊、海豹和企鵝的生動姿態。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚌 旭川電氣軌道巴士 41/47番 (單程約 ¥500)</b><br>• 10:10 旭川站出發 ➔ 10:51 抵達動物園<br>• 10:40 旭川站出發 ➔ 11:21 抵達動物園<br>• 11:10 旭川站出發 ➔ 11:51 抵達動物園</span>', transport: '🚌 旭川站轉公車', duration: '停留 3.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=旭山動物園' },
-                        { time: '14:30', title: '午遲餐：旭川拉麵村', desc: '集合了八家旭川著名的醬油拉麵名店，如梅光軒、青葉等，一次滿足。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚕 計程車直達 (單程約 ¥2,500)</b><br>• 14:15 動物園叫車出發 ➔ 14:30 抵達拉麵村<br>• 14:30 動物園叫車出發 ➔ 14:45 抵達拉麵村<br>• 14:45 動物園叫車出發 ➔ 15:00 抵達拉麵村</span>', transport: '🚕 計程車/公車', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=あさひかわラーメン村' },
-                        { time: '16:30', title: 'AEON MALL 旭川站前店 / 搭車返回', desc: '在車站旁的商場稍作逛街休息，隨後準備返回。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚆 JR 石北本線 (單程約 ¥250)</b><br>• 15:36 南永山站出發 ➔ 15:48 抵達旭川站<br>• 16:11 南永山站出發 ➔ 16:21 抵達旭川站<br>• 17:15 南永山站出發 ➔ 17:25 抵達旭川站</span>', transport: '🚂 JR 區間車', duration: '12 分鐘', map: '' },
-                        { time: '19:30', title: '札幌市區晚餐：甜點收尾', desc: '搭車回到札幌，晚餐可簡單吃，重點是體驗札幌特有的「夜間聖代 (シメパフェ)」，以華麗的冰淇淋聖代結束美好的一天。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚆 JR 特急回程 (自由席單程約 ¥5,220)</b><br>• 17:00 旭川出發 ➔ 18:25 抵達札幌<br>• 17:30 旭川出發 ➔ 18:55 抵達札幌<br>• 18:00 旭川出發 ➔ 19:25 抵達札幌</span>', transport: '🚂 JR 特急', duration: '停留 1 小時', map: '' }
+                        { time: '10:30', title: '前往定山溪：河童Liner號 (已預約)', desc: '搭乘預約制的河童Liner號直達巴士。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚌 乘車資訊：</b><br>• 去程：10:30 薄野 (すすきの) 發 ➔ 11:30 定山渓湯の町 抵達<br>• 備註：薄野站乘車處位於地鐵 4 號出口附近。</span>', transport: '🚌 直達巴士', duration: '約 60 分鐘', map: 'https://www.google.com/maps/search/?api=1&query=すすきの駅' },
+                        { time: '11:30', title: '定山溪溫泉區賞楓', desc: '在定山溪湯之町下車後，可前往二見吊橋、豐平川沿岸欣賞北海道著名的紅葉美景，並體驗免費的足湯。', transport: '🚶 步行', duration: '停留 2.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=定山渓温泉' },
+                        { time: '14:15', title: '搭車返回市區：河童Liner號 (已預約)', desc: '搭乘預約制巴士返回札幌市區。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚌 乘車資訊：</b><br>• 回程：14:15 定山渓湯の町 發 ➔ 15:15 薄野 (すすきの) 抵達</span>', transport: '🚌 直達巴士', duration: '約 60 分鐘', map: '' },
+                        { time: '15:30', title: '薄野/大通商圈自由活動', desc: '抵達薄野後，可沿路逛街、前往大通公園周邊，或回飯店稍作休息。', transport: '🚶 步行', duration: '停留 3 小時', map: '' },
+                        { time: '19:00', title: '晚餐：居酒屋 瑠玖＆魚平', desc: '氣氛熱鬧的在地人氣居酒屋，生魚片厚實新鮮，非常適合喝點小酒放鬆。', transport: '🚶 步行/地鐵', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=居酒屋+瑠玖＆魚平' }
                     ]
                 },
                 {
                     day: 6,
                     date: '10/16 (五)',
-                    title: '札幌私房漫遊與最後採買',
+                    title: '札幌市區漫遊與最後採買',
                     events: [
-                        { time: '10:00', title: '二条市場', desc: '體驗札幌的在地早市，可以品嚐新鮮的海膽、鮭魚卵等海鮮丼當作奢華的早午餐。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚇 地鐵東西線轉步行 (單程約 ¥210)</b><br>• 09:40 西11丁目出發 ➔ 09:42 抵達大通站<br>• 09:47 西11丁目出發 ➔ 09:49 抵達大通站<br>• 09:54 西11丁目出發 ➔ 09:56 抵達大通站</span>', transport: '🚶 步行/地鐵', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=二条市場' },
-                        { time: '12:00', title: '中島公園秋日散策', desc: '10月中旬有機會在中島公園欣賞到美麗的紅葉與銀杏，非常適合情侶拍照散步。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚇 地鐵南北線 (單程約 ¥210)</b><br>• 11:45 大通站出發 ➔ 11:48 抵達中島公園站<br>• 11:52 大通站出發 ➔ 11:55 抵達中島公園站<br>• 11:59 大通站出發 ➔ 12:02 抵達中島公園站</span>', transport: '🚇 地鐵中島公園站', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=中島公園+札幌' },
-                        { time: '15:00', title: '札幌 JR 塔展望室 T38', desc: '登上高樓俯瞰整個札幌市區，白天與黃昏的景色都相當迷人。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚇 地鐵南北線 (單程約 ¥210)</b><br>• 14:40 中島公園站出發 ➔ 14:45 抵達札幌站<br>• 14:47 中島公園站出發 ➔ 14:52 抵達札幌站<br>• 14:54 中島公園站出發 ➔ 14:59 抵達札幌站</span>', transport: '🚇 地鐵', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=JRタワー展望室+T38' },
-                        { time: '18:00', title: '最後的晚餐：精緻和牛燒肉或居酒屋', desc: '挑選一家高質感的和牛燒肉店，為這趟美好的旅程乾杯慶祝。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚶 步行/地鐵 (單程約 ¥210內)</b><br>• 17:40 札幌站出發 ➔ 17:50 抵達餐廳<br>• 17:50 札幌站出發 ➔ 18:00 抵達餐廳<br>• 18:00 札幌站出發 ➔ 18:10 抵達餐廳</span>', transport: '-', duration: '停留 2 小時', map: '' },
-                        { time: '20:30', title: '行李打包', desc: '回到溫暖的王子大飯店，享受頂樓溫泉，並整理豐富的戰利品。', transport: '-', duration: '-', map: '' }
+                        { time: '10:00', title: '六花亭 札幌本店', desc: '採買經典奶油葡萄夾心餅乾，二樓咖啡廳的限定甜點也非常推薦。', transport: '🚶 步行/地鐵', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=六花亭+札幌本店' },
+                        { time: '12:00', title: '午餐：二条市場', desc: '體驗札幌的在地市場活力！可以品嚐新鮮的海膽、鮭魚卵等海鮮丼。', transport: '🚶 步行', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=二条市場' },
+                        { time: '14:00', title: '大通公園與狸小路自由逛街', desc: '午後沒有緊湊行程，可在狸小路商店街補齊藥妝，或大通公園悠閒散步。', transport: '🚶 步行', duration: '停留 3 小時', map: 'https://www.google.com/maps/search/?api=1&query=狸小路商店街' },
+                        { time: '18:00', title: '最後的晚餐：自由選擇', desc: '把握在北海道的最後一個晚上，隨興走入順眼的拉麵店或餐廳。', transport: '-', duration: '停留 2 小時', map: '' },
+                        { time: '20:30', title: '行李打包', desc: '回到飯店整理豐富的戰利品與滿滿的回憶。', transport: '-', duration: '-', map: '' }
                     ]
                 },
                 {
@@ -365,9 +373,9 @@
                     title: '滿載而歸，下次再見',
                     events: [
                         { time: '09:30', title: '飯店退房', desc: '辦理 Check-out，帶著滿滿的回憶準備前往機場。', transport: '-', duration: '-', map: '' },
-                        { time: '10:00', title: '搭乘 JR 前往機場', desc: '預留充足時間，搭乘快速機場線前往新千歲機場。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚆 JR 快速機場線 (單程約 ¥1,150)</b><br>• 09:54 札幌出發 ➔ 10:33 抵達新千歲機場<br>• 10:06 札幌出發 ➔ 10:44 抵達新千歲機場<br>• 10:18 札幌出發 ➔ 10:56 抵達新千歲機場</span>', transport: '🚂 JR 快速機場線', duration: '40 分鐘', map: '' },
-                        { time: '11:00', title: '新千歲機場國內線航廈：伴手禮天堂', desc: '新千歲機場非常好逛！Royce 巧克力世界、哆啦A夢天空公園、各式北海道特產都在這裡，做最後的衝刺買齊伴手禮。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚶 步行 (國內線航廈內，約 10 分鐘)</b></span>', transport: '🚶 步行', duration: '停留 3.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=新千歲機場' },
-                        { time: '14:25', title: '前往國際線辦理報到', desc: '航班起飛前兩小時，前往國際線航廈辦理星宇航空 JX 851 報到托運手續。<br><span class="block mt-3 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-slate-700 leading-relaxed shadow-sm"><b>🚶 步行 (機場連通通道，約 10 分鐘)</b></span>', transport: '🚶 步行', duration: '-', map: '' },
+                        { time: '10:00', title: '搭乘 JR 前往機場', desc: '搭乘快速機場線前往新千歲機場。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚆 推薦班次 (單程 ¥1,150，約40分)：</b><br>• 09:54 札幌發 ➔ 10:33 機場抵達<br>• 10:06 札幌發 ➔ 10:45 機場抵達<br>• 10:18 札幌發 ➔ 10:56 機場抵達</span>', transport: '🚂 JR 快速機場線', duration: '40 分鐘', map: '' },
+                        { time: '11:00', title: '新千歲機場國內線航廈：最後血拼', desc: '新千歲機場國內線超級好逛！各式北海道特產都在這裡做最後衝刺。', transport: '🚶 步行', duration: '停留 3.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=新千歲機場' },
+                        { time: '14:25', title: '前往國際線辦理報到', desc: '前往國際線航廈辦理星宇航空 JX 851 (16:25 起飛) 報到托運手續。', transport: '🚶 步行', duration: '-', map: '' },
                         { time: '16:25', title: '搭機返回台北', desc: '滿載浪漫回憶，平安返回溫暖的家。(預計 19:35 抵達 TPE)', transport: '✈️ 飛機', duration: '約 4 小時', map: '' }
                     ]
                 }
@@ -448,10 +456,13 @@
             const foodData = [
                 { name: '成吉思汗だるま 本店', category: '必吃名店', type: '烤肉', desc: '札幌必吃烤羊肉，肉質極佳無羊騷味，搭配特製沾醬與啤酒是絕配。', map: 'https://www.google.com/maps/search/?api=1&query=成吉思汗だるま+本店' },
                 { name: '湯咖喱 奥芝商店 実家', category: '必吃名店', type: '咖哩', desc: '以濃郁鮮甜的蝦子熬製湯頭聞名，食材豐富，是札幌湯咖哩的代表之一。', map: 'https://www.google.com/maps/search/?api=1&query=湯咖喱+奥芝商店+実家' },
+                { name: 'ラーメン札幌一粒庵', category: '拉麵', type: '拉麵', desc: '位於札幌車站旁，嚴選北海道在地食材，以「元氣味噌拉麵」最具代表性。', map: 'https://www.google.com/maps/search/?api=1&query=ラーメン札幌一粒庵&query_place_id=ChIJWbR8RnQpC18RD7V0WDDPGF4' },
+                { name: '麺屋雪風 すすきの本店', category: '拉麵', type: '拉麵', desc: '薄野超人氣名店，招牌「濃厚味噌拉麵」將豚骨雞白湯與味噌完美融合，香氣四溢。', map: 'https://www.google.com/maps/search/?api=1&query=麺屋雪風+すすきの本店&query_place_id=ChIJoQUaJYYpC18RppwejO6iP_A' },
                 { name: '柿崎商店 海鮮工房', category: '海鮮', type: '海鮮丼', desc: '位於余市車站附近，當地人也愛去的高CP值海鮮丼飯，新鮮份量大。', map: 'https://www.google.com/maps/search/?api=1&query=柿崎商店+海鮮工房' },
                 { name: 'LeTAO 本店', category: '甜點', type: '蛋糕', desc: '小樽必訪甜點，經典雙層乳酪蛋糕入口即化。二樓附設咖啡廳可內用。', map: 'https://www.google.com/maps/search/?api=1&query=LeTAO+本店' },
                 { name: '六花亭 札幌本店', category: '甜點', type: '伴手禮/甜點', desc: '除了購買經典的奶油葡萄夾心餅乾，二樓咖啡廳的限定甜點也非常推薦。', map: 'https://www.google.com/maps/search/?api=1&query=六花亭+札幌本店' },
                 { name: '旭川拉麵村', category: '拉麵', type: '拉麵', desc: '匯集旭川八大知名拉麵品牌，以醬油湯頭為主，一次滿足選擇困難症。', map: 'https://www.google.com/maps/search/?api=1&query=あさひかわラーメン村' },
+                { name: 'らーめん信玄 南６条店', category: '拉麵', type: '拉麵', desc: '札幌人氣最高的拉麵名店之一！主打濃郁的「信州」味噌口味，炒飯也極度推薦。', map: 'https://www.google.com/maps/search/?api=1&query=らーめん信玄+南６条店' },
                 { name: '二条市場 どんぶり茶屋', category: '海鮮', type: '海鮮丼', desc: '位於二条市場內，選擇多樣的豪華海鮮丼，體驗在地市場活力。', map: 'https://www.google.com/maps/search/?api=1&query=どんぶり茶屋+二条市場店' },
                 { name: '夜間聖代 (Parfaiteria beL)', category: '甜點', type: '聖代', desc: '體驗札幌獨特的「收尾聖代」文化，精緻如藝術品的聖代，為夜晚完美作結。', map: 'https://www.google.com/maps/search/?api=1&query=Parfaiteria+beL+札幌' },
             ];
