@@ -185,15 +185,15 @@
         <section id="food">
             <div class="text-center mb-10">
                 <h2 class="text-3xl font-bold text-indigo-900 mb-4">精選美食地圖</h2>
-                <p class="text-slate-600 max-w-2xl mx-auto">北海道是美食天堂！這裡為您整理了行程中必吃的兩大名店，以及其他周邊推薦。您可以使用下方按鈕篩選料理種類，並直接點擊連結導航。</p>
+                <p class="text-slate-600 max-w-2xl mx-auto">北海道是美食天堂！這裡為您整理了行程中的精選推薦餐廳。您可以使用下方按鈕依「料理類型」篩選，並直接點擊連結導航。</p>
             </div>
 
             <div class="flex flex-wrap justify-center gap-2 mb-8" id="food-filters">
                 <button class="px-4 py-2 rounded-full border border-indigo-600 text-sm font-medium transition-colors filter-active" data-filter="all">全部美食</button>
-                <button class="px-4 py-2 rounded-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 text-sm font-medium transition-colors" data-filter="必吃名店">必吃名店</button>
-                <button class="px-4 py-2 rounded-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 text-sm font-medium transition-colors" data-filter="海鮮">海鮮/壽司</button>
-                <button class="px-4 py-2 rounded-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 text-sm font-medium transition-colors" data-filter="甜點">甜點/下午茶</button>
+                <button class="px-4 py-2 rounded-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 text-sm font-medium transition-colors" data-filter="烤肉/咖哩">烤肉/咖哩</button>
+                <button class="px-4 py-2 rounded-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 text-sm font-medium transition-colors" data-filter="海鮮/壽司">海鮮/壽司</button>
                 <button class="px-4 py-2 rounded-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 text-sm font-medium transition-colors" data-filter="拉麵">拉麵</button>
+                <button class="px-4 py-2 rounded-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 text-sm font-medium transition-colors" data-filter="甜點">甜點/咖啡</button>
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="food-grid">
@@ -293,13 +293,17 @@
                 {
                     day: 1,
                     date: '10/11 (日)',
-                    title: '抵達北國，浪漫湯咖哩之夜',
+                    title: '啟程北國，浪漫湯咖哩之夜',
                     events: [
-                        { time: '15:10', title: '抵達新千歲機場 (CTS)', desc: '搭乘星宇航空 JX 850 抵達。辦理入境手續、領取行李。', transport: '✈️ 飛機', duration: '約 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=新千歲機場' },
-                        { time: '16:15', title: '搭乘 JR 前往札幌市區', desc: '搭乘 JR 快速機場線 (Rapid Airport) 前往札幌車站。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚆 推薦班次 (單程 ¥1,150 【使用 JR PASS】，約40分)：</b><br>• 15:54發 - 16:33抵達<br>• 16:06發 - 16:45抵達<br>• 16:18發 - 16:55抵達</span>', transport: '🚂 JR 快速機場線', duration: '40 分鐘', map: '' },
-                        { time: '17:15', title: '飯店 Check-in', desc: '前往 ホテルJALシティ札幌中島公園 辦理入住，放下行李。', transport: '🚇 地鐵/步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=ホテルJALシティ札幌中島公園' },
-                        { time: '18:00', title: 'JINS 札幌 PARCO 店', desc: '前往 PARCO 挑選款式與配製眼鏡。', transport: '🚶 步行/地鐵', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=JINS+札幌PARCO店' },
-                        { time: '19:30', title: '晚餐：二選一 (漢堡 或 湯咖哩)', desc: '可依心情選擇美式漢堡 <b>SHOGUN BURGER SUSUKINO</b>，或是知名的 <b>スープカレー奥芝商店 実家</b>。', transport: '🚶 步行', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=スープカレー奥芝商店+実家' }
+                        { time: '05:45', title: '家中出發前往機捷', desc: '從板橋家中搭乘 Uber 前往機場捷運台北車站 (A1)。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚗 交通預估：</b><br>• 清晨車況佳，車程約 15-20 分鐘<br>• 預計 06:05 抵達機捷車站</span>', transport: '🚗 Uber', duration: '約 20 分鐘', map: 'https://maps.google.com/?cid=17069658914074545682' },
+                        { time: '06:15', title: '搭乘機場捷運直達車', desc: '從機捷台北車站 (A1) 搭乘直達車前往桃園機場第一航廈 (A12)。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚆 乘車資訊：</b><br>• 06:15 台北車站發 ➔ 06:51 抵達第一航廈</span>', transport: '🚆 機場捷運', duration: '約 36 分鐘', map: 'https://maps.google.com/?cid=9944516550051206950' },
+                        { time: '07:05', title: '抵達機場與報到', desc: '於航班起飛前 3 小時順利抵達桃園機場第一航廈。前往星宇航空櫃台辦理報到及行李托運。', transport: '🚶 步行', duration: '停留 3 小時', map: '' },
+                        { time: '10:05', title: '搭機前往北海道', desc: '搭乘星宇航空 JX 850 前往新千歲機場 (CTS)。', transport: '✈️ 飛機', duration: '約 4 小時', map: '' },
+                        { time: '15:10', title: '抵達新千歲機場 (CTS)', desc: '抵達日本北海道！辦理入境手續、領取行李。', transport: '🚶 步行', duration: '約 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=新千歲機場' },
+                        { time: '16:15', title: '搭乘 JR 前往札幌市區', desc: '搭乘 JR 快速機場線 (Rapid Airport) 前往札幌車站。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚆 乘車資訊 (【使用 JR PASS】)：</b><br>• 16:18 發 ➔ 16:55 抵達<br>• 16:30 發 ➔ 17:08 抵達<br>• 16:42 發 ➔ 17:21 抵達</span>', transport: '🚂 JR 快速機場線', duration: '40 分鐘', map: '' },
+                        { time: '17:15', title: '飯店 Check-in', desc: '抵達札幌站後，轉乘地下鐵或搭乘計程車前往「ホテルJALシティ札幌中島公園」辦理入住，稍作休息。', transport: '🚇 地鐵/步行', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=ホテルJALシティ札幌中島公園' },
+                        { time: '19:00', title: '晚餐：湯咖喱 奥芝商店 実家', desc: '【必吃名店】品嚐鮮甜蝦湯頭的北海道特產湯咖哩，暖胃又暖心。', transport: '🚶 步行/地鐵', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=湯咖喱+奥芝商店+実家' },
+                        { time: '21:00', title: '札幌電視塔與大通公園夜景', desc: '飯後牽手漫步大通公園，欣賞札幌電視塔點燈的美麗夜景。', transport: '🚶 步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=大通公園+札幌' }
                     ]
                 },
                 {
@@ -308,9 +312,9 @@
                     title: '微醺余市與純愛小樽',
                     events: [
                         { time: '08:30', title: '出發前往余市', desc: '早上搭乘 JR 前往余市 (需在小樽轉車)。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚆 乘車費用提醒：</b><br>• 札幌 ➔ 小樽：【使用 JR PASS】<br>• 小樽 ➔ 余市：需自費單程 ¥440<br><br><b>🚆 推薦班次 (總車程約90分)：</b><br>• 07:43 札幌發 ➔ 08:29 小樽換車 (08:52發) ➔ 09:16 余市抵達<br>• 08:32 札幌發 ➔ 09:17 小樽換車 (09:40發) ➔ 10:04 余市抵達</span>', transport: '🚂 JR 函館本線', duration: '約 1.5 小時', map: '' },
-                        { time: '10:30', title: 'ニッカウヰスキー 余市蒸溜所 (已預訂)', desc: '【預約制見學】參觀威士忌製作過程。', transport: '🚶 步行', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=ニッカウヰスキー+余市蒸溜所' },
+                        { time: '10:30', title: 'ニッカウヰスキー 余市蒸溜所 (已預訂)', desc: '【預約制見學】參觀威士忌製作過程 (已轉換為日本時間 GMT+9)。', transport: '🚶 步行', duration: '停留 2 小時', map: 'https://www.google.com/maps/search/?api=1&query=ニッカウヰスキー+余市蒸溜所' },
                         { time: '12:30', title: '搭車前往小樽', desc: '結束見學後，搭乘 JR 回到小樽。<br><br><span class="text-xs text-indigo-700 bg-indigo-50 p-2 rounded block mt-2"><b>🚆 乘車資訊：</b><br>• 余市 ➔ 小樽：需自費單程 ¥440<br>• 12:33 余市發 ➔ 12:57 小樽抵達</span>', transport: '🚂 JR 函館本線', duration: '25 分鐘', map: '' },
-                        { time: '13:00', title: '午餐：三角市場', desc: '抵達小樽後享用新鮮澎湃的海鮮丼。', transport: '🚶 步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=小樽+三角市場' },
+                        { time: '13:00', title: '午餐：三角市場', desc: '抵達小樽後享用新鮮澎湃的海鮮丼 (已轉換為日本時間 GMT+9)。', transport: '🚶 步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=小樽+三角市場' },
                         { time: '14:30', title: 'かま栄 (Kamaei) 工廠直賣店', desc: '人氣在地魚板老店，現炸熱騰騰的魚板當小吃。', transport: '🚶 步行', duration: '停留 1 小時', map: 'https://www.google.com/maps/search/?api=1&query=かま栄工場直売店' },
                         { time: '15:30', title: '小樽運河與商圈散步', desc: '漫步小樽運河畔，感受懷舊復古氛圍。', transport: '🚶 步行', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=小樽運河' },
                         { time: '17:30', title: '晚餐：若鶏時代なると 本店', desc: '小樽必吃靈魂美食「炸半雞」，外皮酥脆多汁。', transport: '🚶 步行', duration: '停留 1.5 小時', map: 'https://www.google.com/maps/search/?api=1&query=若鶏時代なると+本店' },
@@ -454,17 +458,19 @@
             });
 
             const foodData = [
-                { name: '成吉思汗だるま 本店', category: '必吃名店', type: '烤肉', desc: '札幌必吃烤羊肉，肉質極佳無羊騷味，搭配特製沾醬與啤酒是絕配。', map: 'https://www.google.com/maps/search/?api=1&query=成吉思汗だるま+本店' },
-                { name: '湯咖喱 奥芝商店 実家', category: '必吃名店', type: '咖哩', desc: '以濃郁鮮甜的蝦子熬製湯頭聞名，食材豐富，是札幌湯咖哩的代表之一。', map: 'https://www.google.com/maps/search/?api=1&query=湯咖喱+奥芝商店+実家' },
-                { name: 'ラーメン札幌一粒庵', category: '拉麵', type: '拉麵', desc: '位於札幌車站旁，嚴選北海道在地食材，以「元氣味噌拉麵」最具代表性。', map: 'https://www.google.com/maps/search/?api=1&query=ラーメン札幌一粒庵&query_place_id=ChIJWbR8RnQpC18RD7V0WDDPGF4' },
-                { name: '麺屋雪風 すすきの本店', category: '拉麵', type: '拉麵', desc: '薄野超人氣名店，招牌「濃厚味噌拉麵」將豚骨雞白湯與味噌完美融合，香氣四溢。', map: 'https://www.google.com/maps/search/?api=1&query=麺屋雪風+すすきの本店&query_place_id=ChIJoQUaJYYpC18RppwejO6iP_A' },
-                { name: '柿崎商店 海鮮工房', category: '海鮮', type: '海鮮丼', desc: '位於余市車站附近，當地人也愛去的高CP值海鮮丼飯，新鮮份量大。', map: 'https://www.google.com/maps/search/?api=1&query=柿崎商店+海鮮工房' },
-                { name: 'LeTAO 本店', category: '甜點', type: '蛋糕', desc: '小樽必訪甜點，經典雙層乳酪蛋糕入口即化。二樓附設咖啡廳可內用。', map: 'https://www.google.com/maps/search/?api=1&query=LeTAO+本店' },
+                { name: '成吉思汗だるま 本店', category: '烤肉/咖哩', type: '烤羊肉', desc: '札幌必吃烤羊肉，肉質極佳無羊騷味，搭配特製沾醬與啤酒是絕配。', map: 'https://www.google.com/maps/search/?api=1&query=成吉思汗だるま+本店' },
+                { name: '湯咖喱 奥芝商店 実家', category: '烤肉/咖哩', type: '湯咖哩', desc: '以濃郁鮮甜的蝦子熬製湯頭聞名，食材豐富，是札幌湯咖哩的代表之一。', map: 'https://www.google.com/maps/search/?api=1&query=湯咖喱+奥芝商店+実家' },
+                { name: 'ラーメン札幌一粒庵', category: '拉麵', type: '味噌拉麵', desc: '位於札幌車站旁，嚴選北海道在地食材，以「元氣味噌拉麵」最具代表性。', map: 'https://www.google.com/maps/search/?api=1&query=ラーメン札幌一粒庵&query_place_id=ChIJWbR8RnQpC18RD7V0WDDPGF4' },
+                { name: '麺屋雪風 すすきの本店', category: '拉麵', type: '雞白湯味噌', desc: '薄野超人氣名店，招牌「濃厚味噌拉麵」將豚骨雞白湯與味噌完美融合，香氣四溢。', map: 'https://www.google.com/maps/search/?api=1&query=麺屋雪風+すすきの本店&query_place_id=ChIJoQUaJYYpC18RppwejO6iP_A' },
+                { name: 'らーめん信玄 南６条店', category: '拉麵', type: '信州味噌', desc: '札幌人氣最高的拉麵名店之一！主打濃郁的「信州」味噌口味，炒飯也極度推薦。', map: 'https://www.google.com/maps/search/?api=1&query=らーめん信玄+南６条店' },
+                { name: '旭川拉麵村', category: '拉麵', type: '醬油拉麵', desc: '匯集旭川八大知名拉麵品牌，以醬油湯頭為主，一次滿足選擇困難症。', map: 'https://www.google.com/maps/search/?api=1&query=あさひかわラーメン村' },
+                { name: '柿崎商店 海鮮工房', category: '海鮮/壽司', type: '海鮮丼', desc: '位於余市車站附近，當地人也愛去的高CP值海鮮丼飯，新鮮份量大。', map: 'https://www.google.com/maps/search/?api=1&query=柿崎商店+海鮮工房' },
+                { name: '二条市場 どんぶり茶屋', category: '海鮮/壽司', type: '海鮮丼', desc: '位於二条市場內，選擇多樣的豪華海鮮丼，體驗在地市場活力。', map: 'https://www.google.com/maps/search/?api=1&query=どんぶり茶屋+二条市場店' },
+                { name: '回転寿司根室花まる', category: '海鮮/壽司', type: '迴轉壽司', desc: 'JR 塔 Stellar Place 店。北海道超人氣平價迴轉壽司，食材極度新鮮。', map: 'https://www.google.com/maps/search/?api=1&query=回転寿司根室花まる+ステラプレイス店' },
+                { name: 'LeTAO 本店', category: '甜點', type: '乳酪蛋糕', desc: '小樽必訪甜點，經典雙層乳酪蛋糕入口即化。二樓附設咖啡廳可內用。', map: 'https://www.google.com/maps/search/?api=1&query=LeTAO+本店' },
                 { name: '六花亭 札幌本店', category: '甜點', type: '伴手禮/甜點', desc: '除了購買經典的奶油葡萄夾心餅乾，二樓咖啡廳的限定甜點也非常推薦。', map: 'https://www.google.com/maps/search/?api=1&query=六花亭+札幌本店' },
-                { name: '旭川拉麵村', category: '拉麵', type: '拉麵', desc: '匯集旭川八大知名拉麵品牌，以醬油湯頭為主，一次滿足選擇困難症。', map: 'https://www.google.com/maps/search/?api=1&query=あさひかわラーメン村' },
-                { name: 'らーめん信玄 南６条店', category: '拉麵', type: '拉麵', desc: '札幌人氣最高的拉麵名店之一！主打濃郁的「信州」味噌口味，炒飯也極度推薦。', map: 'https://www.google.com/maps/search/?api=1&query=らーめん信玄+南６条店' },
-                { name: '二条市場 どんぶり茶屋', category: '海鮮', type: '海鮮丼', desc: '位於二条市場內，選擇多樣的豪華海鮮丼，體驗在地市場活力。', map: 'https://www.google.com/maps/search/?api=1&query=どんぶり茶屋+二条市場店' },
-                { name: '夜間聖代 (Parfaiteria beL)', category: '甜點', type: '聖代', desc: '體驗札幌獨特的「收尾聖代」文化，精緻如藝術品的聖代，為夜晚完美作結。', map: 'https://www.google.com/maps/search/?api=1&query=Parfaiteria+beL+札幌' },
+                { name: '福吉カフェ 旭橋本店', category: '甜點', type: '下午茶/常盤燒', desc: '位於旭川的歷史建築改建咖啡廳。推薦抹茶拿鐵和名物「常盤燒」。', map: 'https://www.google.com/maps/search/?api=1&query=福吉カフェ+旭橋本店' },
+                { name: '夜間聖代 (Parfaiteria beL)', category: '甜點', type: '收尾聖代', desc: '體驗札幌獨特的「收尾聖代」文化，精緻如藝術品的聖代，為夜晚完美作結。', map: 'https://www.google.com/maps/search/?api=1&query=Parfaiteria+beL+札幌' }
             ];
 
             const renderFood = (filterCategory = 'all') => {
